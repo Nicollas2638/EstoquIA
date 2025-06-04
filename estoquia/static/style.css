@@ -1,0 +1,242 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(to right, #ffffff15, #24668a);
+  font-family: 'Segoe UI', sans-serif;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.chatbot-container {
+  width: 100%;
+  max-width: 900px;
+  height: 90vh;
+  max-height: 700px;
+  background-color: #ffffff15;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 2px solid #3b82f6;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.chat-header {
+  background-color: #3b82f6;
+  color: white;
+  padding: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.chat-title {
+  flex-grow: 1;
+  text-align: center;
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toggle-history {
+  background-color: #60a5fa;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.toggle-history:hover {
+  background-color: #3b82f6;
+}
+
+.logout-button {
+  background-color: #60a5fa;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logout-button:hover {
+  background-color: #3b82f6;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 20px;
+  background-color: #f4f7fa;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.message {
+  margin-bottom: 15px;
+  max-width: 75%;
+  padding: 10px 15px;
+  border-radius: 12px;
+  line-height: 1.4;
+}
+
+.user-message {
+  background-color: #dbeafe;
+  align-self: flex-end;
+  margin-left: auto;
+  text-align: right;
+}
+
+.bot-message {
+  background-color: #e2e8f0;
+  align-self: flex-start;
+  margin-right: auto;
+}
+
+.chat-input {
+  display: flex;
+  border-top: 1px solid #ddd;
+  padding: 10px;
+  background-color: #ffffff;
+  gap: 10px;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+}
+
+.chat-input button {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.chat-input button:hover {
+  background-color: #2563eb;
+}
+
+.history-panel {
+  position: absolute;
+  top: 0;
+  left: -260px;
+  width: 250px;
+  height: 100%;
+  background-color: #e5ecf5;
+  border-right: 2px solid #3b82f6;
+  padding: 15px;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  transition: left 0.3s ease;
+  overflow-y: auto;
+  z-index: 2;
+}
+
+.history-panel.open {
+  left: 0;
+}
+
+.chatbot-container.shifted {
+  transform: translateX(250px);
+}
+
+.history-panel h3 {
+  margin-top: 0;
+  font-size: 18px;
+  color: #1e40af;
+  margin-bottom: 10px;
+}
+
+.history-item {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.history-item:hover {
+  background-color: #e0e7ff;
+}
+
+/* Responsividade*/
+@media (max-width: 768px) {
+  .chatbot-container {
+    height: 95vh;
+    max-width: 100%;
+    border-radius: 10px;
+  }
+
+  .chat-messages {
+    padding: 15px;
+  }
+
+  .chat-input {
+    flex-direction: column;
+  }
+
+  .chat-input input {
+    width: 100%;
+  }
+
+  .chat-input button {
+    width: 100%;
+  }
+
+  .toggle-history {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+
+  .chatbot-container.shifted {
+    transform: none;
+  }
+
+  .history-panel {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 80%;
+    max-width: 300px;
+    z-index: 999;
+  }
+
+  .history-panel.open {
+    left: 0;
+  }
+}
