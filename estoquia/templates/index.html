@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>EstoquIA</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <div id="historyPanel" class="history-panel">
+    <h3>Buscas recentes</h3>
+  </div>
+
+  <div id="chatContainer" class="chatbot-container">
+    <div class="chat-header">
+      <button id="toggleBtn" class="toggle-history" onclick="toggleHistory()">Histórico</button>
+      <span class="chat-title">EstoquIA - {{ nome }}</span>
+      <a href="{{ url_for('logout') }}" class="logout-button toggle-history">Logout</a>
+    </div>
+
+    <div class="chat-messages" id="mensagens">
+      <div class="message bot-message">Olá! Como posso te ajudar hoje?</div>
+      <div class="message bot-message">
+        <strong>Comandos disponíveis:</strong><br>
+        - entrada – Adicionar produtos ao estoque (ex: adicionar mouse 10 5 escritorio)<br>
+        - saida  – Saída de produtos (ex: saida mouse 10)<br>
+        - status – Ver o status de um produto no estoque (ex: status mouse)<br>
+        - listar – Ver todos os produtos em estoque<br>
+        - comandos - Ver comandos disponíveis<br>
+        - <strong>(admin) </strong>cadastrar – Cadastrar um produto novo e seu alerta de estoque<br>(ex: cadastrar mouse 10 3 escritorio)<br>
+        - <strong>(admin) </strong>adicionarusuario – Cadastrar um usuário novo<br>(ex: adicionarusuario Pedro pedro@estoquia.com senha123 operador)<br>
+<br>
+      </div>
+    </div>
+
+    <div class="chat-input">
+      <input type="text" id="mensagemInput" placeholder="Digite sua mensagem..." autocomplete="off" />
+      <button id="enviarBtn">Enviar</button>
+    </div>
+  </div>
+
+  <script>
+    function toggleHistory() {
+      const panel = document.getElementById("historyPanel");
+      const chat = document.getElementById("chatContainer");
+      const button = document.getElementById("toggleBtn");
+      panel.classList.toggle("open");
+      chat.classList.toggle("shifted");
+      button.textContent = panel.classList.contains("open") ? "Fechar" : "Histórico";
+    }
+
+    async function enviarMensagem() {
+      const input = document.getElementById("mensagemInput");
+      const mensagem = input.value.trim();
+      if (!mensagem) return;
+
+      const mensagensContainer = document.getElementById("mensagens");
+
+      const userDiv = document.createElement("div");
+      userDiv.className = "message user-message";
+      userDiv.innerText = mensagem;
+      mensagensContainer.appendChild(userDiv);
+
+      input.value = "";
+      mensagensContainer.scrollTop = mensagensContainer.scrollHeight;
+
+      try {
+        const response = await fetch("/mensagem", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mensagem }),
+        });
+        const data = await response.json();
+
+        const botDiv = document.createElement("div");
+        botDiv.className = "message bot-message";
+        botDiv.innerText = data.resposta;
+        mensagensContainer.appendChild(botDiv);
+
+        mensagensContainer.scrollTop = mensagensContainer.scrollHeight;
+
+        carregarHistorico();
+      } catch (error) {
+        console.error("Erro ao enviar mensagem:", error);
+      }
+    }
+
+    document.getElementById("enviarBtn").addEventListener("click", enviarMensagem);
+
+    document.getElementById("mensagemInput").addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        enviarMensagem();
+      }
+    });
+
+    async function carregarHistorico() {
+      const response = await fetch("/historico");
+      const historico = await response.json();
+      const painel = document.getElementById("historyPanel");
+
+      // Remove itens antigos
+      const itensAntigos = painel.querySelectorAll(".history-item");
+      itensAntigos.forEach(item => item.remove());
+
+      if (historico.length === 0) {
+        const vazio = document.createElement("div");
+        vazio.className = "history-item";
+        vazio.innerText = "Sem histórico recente.";
+        painel.appendChild(vazio);
+      } else {
+        historico.forEach(msg => {
+          const item = document.createElement("div");
+          item.className = "history-item";
+          const remetente = msg.remetente === "bot" ? "Bot" : "Você";
+          item.innerText = `[${msg.data}] ${remetente}: ${msg.mensagem}`;
+          painel.appendChild(item);
+        });
+      }
+    }
+
+    window.onload = carregarHistorico;
+  </script>
+</body>
+</html>
